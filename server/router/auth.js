@@ -43,6 +43,7 @@ router.get("/", (req, res) => {
 //   res.json({message: req.body});
 // });
 //using async /await
+//signUp
 router.post("/register", async (req, res) => {
   const {
     name,
@@ -77,5 +78,25 @@ router.post("/register", async (req, res) => {
   //console.log(req.body.work);
   //   res.send("register page");
   //res.json({message: req.body});
+});
+//signIn
+
+router.post("/login", async (req, res) => {
+  //   console.log(req.body);
+  //   res.json({message: "login welcoome"});
+  try {
+    const {email, password} = req.body;
+    if (!email || !password) {
+      return res.status(400).json({error: "filled the data"});
+    }
+    const userLogin = await User.findOne({email: email});
+    console.log(userLogin);
+    if (!userLogin) {
+      res.status(400).json({error: "error something wrong"});
+    }
+    res.status(200).json({message: "user logged successfully"});
+  } catch (error) {
+    console.log(error);
+  }
 });
 module.exports = router;
