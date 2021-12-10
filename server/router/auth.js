@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../models/userSchema");
 const router = express.Router();
-
+const bcrypt = require("bcryptjs");
 router.get("/", (req, res) => {
   console.log("hello from router");
 });
@@ -93,11 +93,18 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({error: "filled the data"});
     }
     const userLogin = await User.findOne({email: email});
-    console.log(userLogin);
-    if (!userLogin) {
-      res.status(400).json({error: "error something wrong"});
+
+    // console.log(userLogin);
+    if (userLogin) {
+      const isMatch = await bcrypt.compareSync(password, userLogin.password);
+      if (!isMatch) {
+        res.status(400).json({error: "error something wrong in  email or password "});
+      } else {
+        res.json({message: "user logged successfully"});
+      }
+    } else {
+      res.status(400).json({error: "error something wrong in  email or password "});
     }
-    res.status(200).json({message: "user logged successfully"});
   } catch (error) {
     console.log(error);
   }
